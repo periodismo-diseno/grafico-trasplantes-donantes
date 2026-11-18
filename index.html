@@ -1,0 +1,1678 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Evolución de donantes efectivos y trasplantes, 2022–2026</title>
+  <style>
+    /* ==========================================================================
+       VARIABLES DE DISEÑO Y SISTEMA VISUAL (ESTILO INFORME INSTITUCIONAL)
+       ========================================================================== */
+    :root {
+      --bg-page: #f4f6f9;
+      --bg-card: #ffffff;
+      --bg-subtle: #f8fafc;
+      --bg-control: #f1f5f9;
+      --border-light: #e2e8f0;
+      --border-medium: #cbd5e1;
+
+      --text-primary: #0f172a;
+      --text-secondary: #334155;
+      --text-muted: #64748b;
+
+      /* Colores institucionales requeridos para las series */
+      --color-trasplantes: #1d4ed8;
+      --color-trasplantes-soft: rgba(29, 78, 216, 0.12);
+      --color-donantes: #0d9488;
+      --color-donantes-soft: rgba(13, 148, 136, 0.12);
+
+      /* Nota institucional destacada */
+      --note-bg: #fffbeb;
+      --note-border: #fcd34d;
+      --note-accent: #d97706;
+      --note-text: #78350f;
+
+      --radius-lg: 14px;
+      --radius-md: 10px;
+      --radius-sm: 6px;
+      --shadow-card: 0 4px 24px -4px rgba(15, 23, 42, 0.07), 0 1px 3px rgba(15, 23, 42, 0.04);
+      --shadow-tooltip: 0 10px 25px -5px rgba(15, 23, 42, 0.16), 0 4px 10px -2px rgba(15, 23, 42, 0.08);
+      --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      --transition-fast: 180ms cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    /* ==========================================================================
+       RESET Y ESTRUCTURA BASE RESPONSIVA
+       ========================================================================== */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      font-family: var(--font-sans);
+      color: var(--text-primary);
+      background-color: var(--bg-page);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 1.25rem 1rem 2rem;
+      line-height: 1.5;
+    }
+
+    .report-container {
+      width: 100%;
+      max-width: 960px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-card);
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* Franja superior institucional */
+    .institutional-ribbon {
+      height: 5px;
+      width: 100%;
+      background: linear-gradient(90deg, #1e3a8a 0%, var(--color-trasplantes) 55%, var(--color-donantes) 100%);
+    }
+
+    .report-inner {
+      padding: 1.5rem 1.75rem 1.4rem;
+    }
+
+    /* ==========================================================================
+       ENCABEZADO Y RESUMEN DE INDICADORES
+       ========================================================================== */
+    .report-header {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      margin-bottom: 1.25rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .report-kicker {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--color-trasplantes);
+    }
+
+    .report-title {
+      font-size: clamp(1.25rem, 2.5vw, 1.65rem);
+      font-weight: 700;
+      color: var(--text-primary);
+      letter-spacing: -0.02em;
+      line-height: 1.25;
+    }
+
+    .report-subtitle {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+
+    /* ==========================================================================
+       BARRA DE CONTROLES Y LEYENDA INTERACTIVA
+       ========================================================================== */
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.85rem;
+      margin-bottom: 1rem;
+      padding: 0.75rem 0.9rem;
+      background-color: var(--bg-subtle);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-md);
+    }
+
+    /* Leyenda interactiva */
+    .legend-group {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .legend-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.55rem;
+      padding: 0.45rem 0.85rem;
+      background: var(--bg-card);
+      border: 1.5px solid var(--border-medium);
+      border-radius: 999px;
+      font-family: inherit;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .legend-btn:hover {
+      border-color: #94a3b8;
+      transform: translateY(-1px);
+      box-shadow: 0 2px 6px rgba(15, 23, 42, 0.06);
+    }
+
+    .legend-btn:focus-visible {
+      outline: 2px solid var(--color-trasplantes);
+      outline-offset: 2px;
+    }
+
+    .legend-btn[aria-pressed="true"][data-series="trasplantes"] {
+      border-color: rgba(29, 78, 216, 0.45);
+      background: rgba(29, 78, 216, 0.04);
+    }
+
+    .legend-btn[aria-pressed="true"][data-series="donantes"] {
+      border-color: rgba(13, 148, 136, 0.45);
+      background: rgba(13, 148, 136, 0.04);
+    }
+
+    .legend-btn[aria-pressed="false"] {
+      opacity: 0.48;
+      background: var(--bg-control);
+      border-color: var(--border-light);
+      text-decoration: line-through;
+      color: var(--text-muted);
+    }
+
+    .legend-swatch {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      position: relative;
+    }
+
+    .legend-swatch::after {
+      content: "";
+      position: absolute;
+      inset: -3px;
+      border-radius: 50%;
+      border: 1.5px solid currentColor;
+      opacity: 0.35;
+    }
+
+    .legend-swatch.trasplantes {
+      background-color: var(--color-trasplantes);
+      color: var(--color-trasplantes);
+    }
+
+    .legend-swatch.donantes {
+      background-color: var(--color-donantes);
+      color: var(--color-donantes);
+    }
+
+    /* Controles derechos: Etiquetas + Cambio de vista */
+    .controls-group {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    /* Interruptor (Switch) para etiquetas de datos */
+    .toggle-control {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      cursor: pointer;
+      font-size: 0.83rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+      user-select: none;
+      padding: 0.3rem 0.4rem;
+      border-radius: var(--radius-sm);
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .toggle-control input {
+      position: absolute;
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .toggle-track {
+      width: 36px;
+      height: 20px;
+      background-color: #cbd5e1;
+      border-radius: 999px;
+      position: relative;
+      transition: background-color var(--transition-fast);
+      flex-shrink: 0;
+    }
+
+    .toggle-thumb {
+      width: 16px;
+      height: 16px;
+      background-color: #ffffff;
+      border-radius: 50%;
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+      transition: transform var(--transition-fast);
+    }
+
+    .toggle-control input:checked + .toggle-track {
+      background-color: var(--color-trasplantes);
+    }
+
+    .toggle-control input:checked + .toggle-track .toggle-thumb {
+      transform: translateX(16px);
+    }
+
+    .toggle-control input:focus-visible + .toggle-track {
+      outline: 2px solid var(--color-trasplantes);
+      outline-offset: 2px;
+    }
+
+    /* Pestañas segmentadas Gráfico / Tabla */
+    .view-tabs {
+      display: inline-flex;
+      background-color: var(--bg-control);
+      padding: 3px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-light);
+    }
+
+    .tab-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.38rem 0.75rem;
+      border: none;
+      border-radius: 4px;
+      background: transparent;
+      font-family: inherit;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+
+    .tab-btn:hover {
+      color: var(--text-primary);
+    }
+
+    .tab-btn[aria-selected="true"] {
+      background: var(--bg-card);
+      color: var(--text-primary);
+      box-shadow: 0 1px 3px rgba(15, 23, 42, 0.1);
+    }
+
+    /* ==========================================================================
+       ÁREA DEL GRÁFICO SVG Y TOOLTIP FLOTANTE
+       ========================================================================== */
+    .chart-wrapper {
+      position: relative;
+      width: 100%;
+      margin-bottom: 1.25rem;
+    }
+
+    .chart-stage {
+      position: relative;
+      width: 100%;
+      height: 410px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      touch-action: pan-y;
+    }
+
+    .chart-stage svg {
+      display: block;
+      width: 100%;
+      height: 100%;
+      user-select: none;
+    }
+
+    /* Estilos internos del SVG */
+    .grid-line {
+      stroke: #e2e8f0;
+      stroke-width: 1;
+      stroke-dasharray: 3 3;
+    }
+
+    .grid-line.baseline {
+      stroke: #94a3b8;
+      stroke-dasharray: none;
+      stroke-width: 1.25;
+    }
+
+    .axis-label {
+      fill: var(--text-muted);
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .axis-label.x-tick {
+      fill: var(--text-secondary);
+      font-size: 12.5px;
+      font-weight: 600;
+    }
+
+    .axis-title {
+      fill: var(--text-muted);
+      font-size: 11.5px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .series-line {
+      fill: none;
+      stroke-width: 3;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      transition: opacity 220ms ease;
+    }
+
+    .series-area {
+      transition: opacity 220ms ease;
+      pointer-events: none;
+    }
+
+    .hover-guide {
+      stroke: #64748b;
+      stroke-width: 1.5;
+      stroke-dasharray: 4 4;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 140ms ease;
+    }
+
+    .hover-guide.visible {
+      opacity: 0.85;
+    }
+
+    .point-halo {
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 150ms ease, r 150ms ease;
+    }
+
+    .point-halo.active {
+      opacity: 0.22;
+    }
+
+    .point-dot {
+      stroke: #ffffff;
+      stroke-width: 2.5;
+      cursor: pointer;
+      transition: r 150ms ease, opacity 220ms ease;
+    }
+
+    .data-value-label {
+      font-size: 11.5px;
+      font-weight: 700;
+      text-anchor: middle;
+      pointer-events: none;
+      paint-order: stroke;
+      stroke: #ffffff;
+      stroke-width: 4px;
+      stroke-linejoin: round;
+      transition: opacity 180ms ease;
+    }
+
+    /* Tooltip flotante */
+    .chart-tooltip {
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 20;
+      min-width: 235px;
+      max-width: 285px;
+      background: rgba(255, 255, 255, 0.97);
+      backdrop-filter: blur(6px);
+      border: 1px solid var(--border-medium);
+      border-radius: var(--radius-md);
+      padding: 0.8rem 0.95rem;
+      box-shadow: var(--shadow-tooltip);
+      pointer-events: none;
+      opacity: 0;
+      transform: translate3d(0, 6px, 0);
+      transition: opacity 150ms ease, transform 150ms ease;
+      font-size: 0.83rem;
+    }
+
+    .chart-tooltip.visible {
+      opacity: 1;
+      transform: translate3d(0, 0, 0);
+    }
+
+    .tooltip-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+      padding-bottom: 0.45rem;
+      margin-bottom: 0.55rem;
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .tooltip-year {
+      font-size: 0.96rem;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .tooltip-tag {
+      font-size: 0.7rem;
+      font-weight: 600;
+      padding: 0.12rem 0.45rem;
+      border-radius: 999px;
+      background: var(--bg-control);
+      color: var(--text-muted);
+    }
+
+    .tooltip-row {
+      display: flex;
+      flex-direction: column;
+      gap: 0.15rem;
+      margin-bottom: 0.55rem;
+    }
+
+    .tooltip-row.dimmed {
+      opacity: 0.45;
+    }
+
+    .tooltip-row-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+    }
+
+    .tooltip-series-name {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.42rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+    }
+
+    .tooltip-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .tooltip-value {
+      font-weight: 700;
+      font-size: 0.95rem;
+      color: var(--text-primary);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .tooltip-yoy {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      padding-left: 0.85rem;
+    }
+
+    .yoy-positive {
+      color: #047857;
+      font-weight: 600;
+    }
+
+    .tooltip-divider {
+      height: 1px;
+      background: var(--border-light);
+      margin: 0.45rem 0;
+    }
+
+    .tooltip-metric {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+      font-size: 0.79rem;
+      color: var(--text-secondary);
+      background: var(--bg-subtle);
+      padding: 0.38rem 0.55rem;
+      border-radius: var(--radius-sm);
+    }
+
+    .tooltip-metric strong {
+      color: var(--text-primary);
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* ==========================================================================
+       VISTA TABLA DE DATOS ESTRUCTURADA
+       ========================================================================== */
+    .table-panel {
+      display: none;
+      margin-bottom: 1.25rem;
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      background: var(--bg-card);
+    }
+
+    .table-panel.active {
+      display: block;
+    }
+
+    .table-toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+      padding: 0.7rem 1rem;
+      background: var(--bg-subtle);
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .table-caption-title {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+    }
+
+    .copy-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.35rem 0.7rem;
+      font-family: inherit;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      background: var(--bg-card);
+      border: 1px solid var(--border-medium);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+
+    .copy-btn:hover {
+      border-color: var(--color-trasplantes);
+      color: var(--color-trasplantes);
+    }
+
+    .table-scroll {
+      width: 100%;
+      overflow-x: auto;
+    }
+
+    table.data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.86rem;
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .data-table th,
+    .data-table td {
+      padding: 0.72rem 0.95rem;
+      border-bottom: 1px solid var(--border-light);
+      white-space: nowrap;
+    }
+
+    .data-table th {
+      background: #f8fafc;
+      font-weight: 700;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      color: var(--text-muted);
+    }
+
+    .data-table th:first-child,
+    .data-table td:first-child {
+      text-align: left;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .data-table tbody tr:hover {
+      background-color: #f8fafc;
+    }
+
+    .data-table tfoot td {
+      background-color: #f1f5f9;
+      font-weight: 700;
+      color: var(--text-primary);
+      border-bottom: none;
+    }
+
+    .badge-series {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      margin-right: 0.35rem;
+    }
+
+    /* ==========================================================================
+       NOTA IMPORTANTE DESTACADA Y PIE DE FUENTE
+       ========================================================================== */
+    .important-note {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      padding: 0.95rem 1.1rem;
+      margin-bottom: 1.1rem;
+      background-color: var(--note-bg);
+      border: 1px solid var(--note-border);
+      border-left: 4px solid var(--note-accent);
+      border-radius: var(--radius-md);
+      color: var(--note-text);
+      font-size: 0.88rem;
+      line-height: 1.5;
+    }
+
+    .important-note-icon {
+      flex-shrink: 0;
+      width: 20px;
+      height: 20px;
+      margin-top: 2px;
+      color: var(--note-accent);
+    }
+
+    .report-footer {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+      padding-top: 0.85rem;
+      border-top: 1px solid var(--border-light);
+      font-size: 0.82rem;
+      color: var(--text-muted);
+    }
+
+    .footer-source {
+      font-weight: 600;
+      color: var(--text-secondary);
+    }
+
+    .footer-hint {
+      font-size: 0.77rem;
+      color: var(--text-muted);
+    }
+
+    /* Mensaje toast no intrusivo */
+    .status-toast {
+      position: fixed;
+      bottom: 1.25rem;
+      right: 1.25rem;
+      z-index: 50;
+      background: #0f172a;
+      color: #ffffff;
+      font-size: 0.82rem;
+      font-weight: 500;
+      padding: 0.6rem 0.95rem;
+      border-radius: var(--radius-md);
+      box-shadow: 0 10px 25px rgba(15, 23, 42, 0.25);
+      opacity: 0;
+      transform: translateY(10px);
+      pointer-events: none;
+      transition: opacity 200ms ease, transform 200ms ease;
+    }
+
+    .status-toast.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ==========================================================================
+       ADAPTACIÓN MÓVIL
+       ========================================================================== */
+    @media (max-width: 640px) {
+      body {
+        padding: 0.65rem 0.5rem 1.25rem;
+      }
+
+      .report-inner {
+        padding: 1.15rem 1rem 1.1rem;
+      }
+
+      .toolbar {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .controls-group {
+        justify-content: space-between;
+        padding-top: 0.45rem;
+        border-top: 1px solid var(--border-light);
+      }
+
+      .chart-stage {
+        height: 330px;
+      }
+
+      .chart-tooltip {
+        min-width: 210px;
+        max-width: 245px;
+        padding: 0.65rem 0.8rem;
+        font-size: 0.79rem;
+      }
+
+      .footer-hint {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <main class="report-container" role="region" aria-labelledby="chart-main-title">
+    <div class="institutional-ribbon" aria-hidden="true"></div>
+
+    <div class="report-inner">
+      <!-- ENCABEZADO DEL INFORME -->
+      <header class="report-header">
+        <span class="report-kicker">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"></polyline>
+            <polyline points="16 7 22 7 22 13"></polyline>
+          </svg>
+          Indicadores de Salud · Chile
+        </span>
+        <h1 id="chart-main-title" class="report-title">Evolución de donantes efectivos y trasplantes, 2022–2026</h1>
+        <p class="report-subtitle">Serie anual comparativa del número de donantes efectivos y total de trasplantes realizados a nivel nacional.</p>
+      </header>
+
+      <!-- BARRA DE CONTROLES Y LEYENDA INTERACTIVA -->
+      <section class="toolbar" aria-label="Controles del gráfico">
+        <div class="legend-group" role="group" aria-label="Series de datos">
+          <button
+            type="button"
+            class="legend-btn"
+            data-series="trasplantes"
+            aria-pressed="true"
+            title="Activar o desactivar la serie Total Trasplantes"
+          >
+            <span class="legend-swatch trasplantes" aria-hidden="true"></span>
+            <span>Total Trasplantes</span>
+          </button>
+
+          <button
+            type="button"
+            class="legend-btn"
+            data-series="donantes"
+            aria-pressed="true"
+            title="Activar o desactivar la serie Donantes Efectivos"
+          >
+            <span class="legend-swatch donantes" aria-hidden="true"></span>
+            <span>Donantes Efectivos</span>
+          </button>
+        </div>
+
+        <div class="controls-group">
+          <label class="toggle-control" id="labels-toggle-wrapper">
+            <input type="checkbox" id="toggle-data-labels" />
+            <span class="toggle-track" aria-hidden="true">
+              <span class="toggle-thumb"></span>
+            </span>
+            <span>Mostrar valores</span>
+          </label>
+
+          <div class="view-tabs" role="tablist" aria-label="Modo de visualización">
+            <button
+              type="button"
+              class="tab-btn"
+              id="tab-chart"
+              role="tab"
+              aria-selected="true"
+              aria-controls="panel-chart"
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <line x1="18" y1="20" x2="18" y2="10"></line>
+                <line x1="12" y1="20" x2="12" y2="4"></line>
+                <line x1="6" y1="20" x2="6" y2="14"></line>
+              </svg>
+              Gráfico
+            </button>
+            <button
+              type="button"
+              class="tab-btn"
+              id="tab-table"
+              role="tab"
+              aria-selected="false"
+              aria-controls="panel-table"
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <rect x="3" y="3" width="18" height="18" rx="2"></rect>
+                <line x1="3" y1="9" x2="21" y2="9"></line>
+                <line x1="3" y1="15" x2="21" y2="15"></line>
+                <line x1="9" y1="9" x2="9" y2="21"></line>
+              </svg>
+              Tabla de datos
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- PANEL 1: GRÁFICO DE LÍNEAS SVG INTERACTIVO -->
+      <div id="panel-chart" class="chart-wrapper" role="tabpanel" aria-labelledby="tab-chart">
+        <div
+          class="chart-stage"
+          id="chart-stage"
+          tabindex="0"
+          aria-label="Gráfico de líneas interactivo de evolución de donantes efectivos y trasplantes entre 2022 y 2026. Use las flechas izquierda y derecha o pase el cursor para explorar cada año."
+        >
+          <svg id="evolution-svg" role="img" aria-label="Gráfico de líneas: Evolución de donantes efectivos y trasplantes, 2022–2026"></svg>
+
+          <!-- Tooltip flotante -->
+          <div id="chart-tooltip" class="chart-tooltip" role="status" aria-live="polite"></div>
+        </div>
+      </div>
+
+      <!-- PANEL 2: TABLA DE DATOS ESTRUCTURADA -->
+      <div id="panel-table" class="table-panel" role="tabpanel" aria-labelledby="tab-table">
+        <div class="table-toolbar">
+          <span class="table-caption-title">Detalle numérico anual y tasas derivadas (2022–2026)</span>
+          <button type="button" class="copy-btn" id="copy-table-btn">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+            </svg>
+            Copiar datos
+          </button>
+        </div>
+        <div class="table-scroll">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Año</th>
+                <th><span class="badge-series" style="background:#0d9488"></span>Donantes Efectivos</th>
+                <th>Var. Anual Donantes</th>
+                <th><span class="badge-series" style="background:#1d4ed8"></span>Total Trasplantes</th>
+                <th>Var. Anual Trasplantes</th>
+                <th>Trasplantes / Donante</th>
+              </tr>
+            </thead>
+            <tbody id="data-table-body"></tbody>
+            <tfoot id="data-table-foot"></tfoot>
+          </table>
+        </div>
+      </div>
+
+      <!-- NOTA IMPORTANTE DESTACADA -->
+      <aside class="important-note" role="note" aria-label="Nota importante">
+        <svg class="important-note-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="8" x2="12" y2="12"></line>
+          <line x1="12" y1="16" x2="12.01" y2="16"></line>
+        </svg>
+        <p><strong>Nota importante:</strong> Este gráfico no sugiere que el aumento de trasplantes demuestra que se corrigieron las fallas de procuramiento. Datos validados hasta octubre de 2026.</p>
+      </aside>
+
+      <!-- PIE DE GRÁFICO CON FUENTE OFICIAL -->
+      <footer class="report-footer">
+        <span class="footer-source">Fuente de información: Biblioteca del Congreso Nacional de Chile.</span>
+        <span class="footer-hint">Pase el cursor o toque un punto para ver el detalle anual</span>
+      </footer>
+    </div>
+  </main>
+
+  <!-- Notificación flotante para acciones del usuario -->
+  <div id="status-toast" class="status-toast" role="status" aria-live="polite"></div>
+
+  <script>
+    (function () {
+      "use strict";
+
+      /* ========================================================================
+         1. CONJUNTO DE DATOS OFICIALES (2022–2026)
+         ======================================================================== */
+      const RAW_DATA = [
+        { year: "2022", trasplantes: 362, donantes: 134, note: "Año base" },
+        { year: "2023", trasplantes: 430, donantes: 157, note: null },
+        { year: "2024", trasplantes: 448, donantes: 166, note: null },
+        { year: "2025", trasplantes: 459, donantes: 169, note: null },
+        { year: "2026", trasplantes: 521, donantes: 176, note: "Validado a oct. 2026" }
+      ];
+
+      // Precalcular variaciones porcentuales interanuales y tasa trasplantes/donante
+      const DATASET = RAW_DATA.map((item, idx) => {
+        const prev = idx > 0 ? RAW_DATA[idx - 1] : null;
+        const yoyTrasplantes = prev
+          ? ((item.trasplantes - prev.trasplantes) / prev.trasplantes) * 100
+          : null;
+        const yoyDonantes = prev
+          ? ((item.donantes - prev.donantes) / prev.donantes) * 100
+          : null;
+        const ratio = item.trasplantes / item.donantes;
+
+        return {
+          ...item,
+          yoyTrasplantes,
+          yoyDonantes,
+          ratio
+        };
+      });
+
+      const SERIES_META = {
+        trasplantes: {
+          key: "trasplantes",
+          label: "Total Trasplantes",
+          color: "#1d4ed8",
+          gradientId: "grad-trasplantes"
+        },
+        donantes: {
+          key: "donantes",
+          label: "Donantes Efectivos",
+          color: "#0d9488",
+          gradientId: "grad-donantes"
+        }
+      };
+
+      /* ========================================================================
+         2. ESTADO DE LA APLICACIÓN
+         ======================================================================== */
+      const state = {
+        visibleSeries: {
+          trasplantes: true,
+          donantes: true
+        },
+        showPermanentLabels: false,
+        activeIndex: null,
+        currentYMax: 600,
+        targetYMax: 600,
+        animFrameId: null,
+        hasAnimatedIntro: false
+      };
+
+      /* ========================================================================
+         3. REFERENCIAS AL DOM
+         ======================================================================== */
+      const svg = document.getElementById("evolution-svg");
+      const chartStage = document.getElementById("chart-stage");
+      const tooltipEl = document.getElementById("chart-tooltip");
+      const legendButtons = document.querySelectorAll(".legend-btn");
+      const toggleLabelsInput = document.getElementById("toggle-data-labels");
+      const labelsToggleWrapper = document.getElementById("labels-toggle-wrapper");
+      const tabChart = document.getElementById("tab-chart");
+      const tabTable = document.getElementById("tab-table");
+      const panelChart = document.getElementById("panel-chart");
+      const panelTable = document.getElementById("panel-table");
+      const tableBody = document.getElementById("data-table-body");
+      const tableFoot = document.getElementById("data-table-foot");
+      const copyTableBtn = document.getElementById("copy-table-btn");
+      const toastEl = document.getElementById("status-toast");
+
+      let toastTimer = null;
+
+      /* ========================================================================
+         4. UTILIDADES DE FORMATO Y CÁLCULO DE ESCALA
+         ======================================================================== */
+      function formatInt(num) {
+        return new Intl.NumberFormat("es-CL").format(num);
+      }
+
+      function formatPercent(val) {
+        if (val === null || Number.isNaN(val)) return "—";
+        const sign = val > 0 ? "+" : "";
+        return `${sign}${val.toFixed(1).replace(".", ",")}%`;
+      }
+
+      function formatRatio(val) {
+        return val.toFixed(2).replace(".", ",");
+      }
+
+      function showToast(message) {
+        toastEl.textContent = message;
+        toastEl.classList.add("visible");
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => {
+          toastEl.classList.remove("visible");
+        }, 2600);
+      }
+
+      /**
+       * Calcula un máximo superior limpio para el eje Y según las series activas.
+       */
+      function computeTargetYMax() {
+        let maxVal = 0;
+        if (state.visibleSeries.trasplantes) {
+          maxVal = Math.max(maxVal, ...DATASET.map((d) => d.trasplantes));
+        }
+        if (state.visibleSeries.donantes) {
+          maxVal = Math.max(maxVal, ...DATASET.map((d) => d.donantes));
+        }
+        if (maxVal <= 200) return 200;
+        return Math.ceil((maxVal * 1.1) / 100) * 100;
+      }
+
+      /**
+       * Genera marcas (ticks) limpias para el eje Y.
+       */
+      function generateYTicks(yMax) {
+        const step = yMax <= 220 ? 50 : 100;
+        const ticks = [];
+        for (let v = 0; v <= yMax + 0.001; v += step) {
+          ticks.push(Math.round(v));
+        }
+        return ticks;
+      }
+
+      /* ========================================================================
+         5. MOTOR DE RENDERIZADO SVG DINÁMICO
+         ======================================================================== */
+      function createSvgElement(tag, attrs = {}) {
+        const el = document.createElementNS("http://www.w3.org/2000/svg", tag);
+        for (const [key, value] of Object.entries(attrs)) {
+          el.setAttribute(key, value);
+        }
+        return el;
+      }
+
+      function getLayoutMetrics() {
+        const rect = chartStage.getBoundingClientRect();
+        const width = Math.max(300, Math.round(rect.width || 880));
+        const height = Math.max(260, Math.round(rect.height || 410));
+        const isMobile = width < 560;
+
+        const margin = {
+          top: isMobile ? 28 : 34,
+          right: isMobile ? 24 : 38,
+          bottom: isMobile ? 48 : 54,
+          left: isMobile ? 48 : 64
+        };
+
+        const plotWidth = Math.max(100, width - margin.left - margin.right);
+        const plotHeight = Math.max(100, height - margin.top - margin.bottom);
+
+        return { width, height, isMobile, margin, plotWidth, plotHeight };
+      }
+
+      function renderChart() {
+        const { width, height, isMobile, margin, plotWidth, plotHeight } = getLayoutMetrics();
+        const yMax = state.currentYMax;
+
+        svg.setAttribute("viewBox", `0 0 ${width} ${height}`);
+        svg.innerHTML = "";
+
+        // 1. Definiciones de gradientes suaves bajo las curvas
+        const defs = createSvgElement("defs");
+
+        const gradT = createSvgElement("linearGradient", {
+          id: SERIES_META.trasplantes.gradientId,
+          x1: "0%",
+          y1: "0%",
+          x2: "0%",
+          y2: "100%"
+        });
+        gradT.appendChild(createSvgElement("stop", { offset: "0%", "stop-color": SERIES_META.trasplantes.color, "stop-opacity": "0.14" }));
+        gradT.appendChild(createSvgElement("stop", { offset: "100%", "stop-color": SERIES_META.trasplantes.color, "stop-opacity": "0.0" }));
+        defs.appendChild(gradT);
+
+        const gradD = createSvgElement("linearGradient", {
+          id: SERIES_META.donantes.gradientId,
+          x1: "0%",
+          y1: "0%",
+          x2: "0%",
+          y2: "100%"
+        });
+        gradD.appendChild(createSvgElement("stop", { offset: "0%", "stop-color": SERIES_META.donantes.color, "stop-opacity": "0.14" }));
+        gradD.appendChild(createSvgElement("stop", { offset: "100%", "stop-color": SERIES_META.donantes.color, "stop-opacity": "0.0" }));
+        defs.appendChild(gradD);
+
+        svg.appendChild(defs);
+
+        // Funciones de escala X e Y
+        const xScale = (index) => {
+          const padX = isMobile ? 16 : 32;
+          const usableW = Math.max(40, plotWidth - padX * 2);
+          return margin.left + padX + (index / (DATASET.length - 1)) * usableW;
+        };
+
+        const yScale = (val) => {
+          return margin.top + plotHeight - (val / yMax) * plotHeight;
+        };
+
+        // 2. Cuadrícula horizontal y Eje Y
+        const gridGroup = createSvgElement("g", { class: "grid-group" });
+        const yTicks = generateYTicks(yMax);
+
+        yTicks.forEach((tickVal) => {
+          const yPos = yScale(tickVal);
+          if (yPos < margin.top - 4 || yPos > margin.top + plotHeight + 2) return;
+
+          const isBaseline = tickVal === 0;
+          gridGroup.appendChild(
+            createSvgElement("line", {
+              x1: margin.left,
+              y1: yPos.toFixed(1),
+              x2: width - margin.right,
+              y2: yPos.toFixed(1),
+              class: isBaseline ? "grid-line baseline" : "grid-line"
+            })
+          );
+
+          const label = createSvgElement("text", {
+            x: margin.left - 10,
+            y: (yPos + 4).toFixed(1),
+            "text-anchor": "end",
+            class: "axis-label"
+          });
+          label.textContent = formatInt(tickVal);
+          gridGroup.appendChild(label);
+        });
+
+        // Título del Eje Y
+        const yTitle = createSvgElement("text", {
+          x: -(margin.top + plotHeight / 2),
+          y: isMobile ? 14 : 18,
+          transform: "rotate(-90)",
+          "text-anchor": "middle",
+          class: "axis-title"
+        });
+        yTitle.textContent = "Cantidad";
+        gridGroup.appendChild(yTitle);
+
+        // 3. Eje X (Años)
+        DATASET.forEach((d, idx) => {
+          const xPos = xScale(idx);
+          const xTick = createSvgElement("text", {
+            x: xPos.toFixed(1),
+            y: (margin.top + plotHeight + 22).toFixed(1),
+            "text-anchor": "middle",
+            class: "axis-label x-tick"
+          });
+          xTick.textContent = d.year;
+          gridGroup.appendChild(xTick);
+        });
+
+        // Título del Eje X
+        const xTitle = createSvgElement("text", {
+          x: margin.left + plotWidth / 2,
+          y: height - 8,
+          "text-anchor": "middle",
+          class: "axis-title"
+        });
+        xTitle.textContent = "Año";
+        gridGroup.appendChild(xTitle);
+
+        svg.appendChild(gridGroup);
+
+        // 4. Línea guía vertical punteada para el hover
+        const guideLine = createSvgElement("line", {
+          id: "svg-hover-guide",
+          x1: 0,
+          y1: margin.top,
+          x2: 0,
+          y2: margin.top + plotHeight,
+          class: "hover-guide"
+        });
+        svg.appendChild(guideLine);
+
+        // 5. Renderizado de cada serie (Área, Línea, Puntos y Etiquetas permanentes)
+        const seriesOrder = ["donantes", "trasplantes"];
+
+        seriesOrder.forEach((seriesKey) => {
+          const isVisible = state.visibleSeries[seriesKey];
+          const meta = SERIES_META[seriesKey];
+          const seriesGroup = createSvgElement("g", {
+            class: `series-group series-${seriesKey}`,
+            style: `opacity: ${isVisible ? 1 : 0}; pointer-events: ${isVisible ? "auto" : "none"};`
+          });
+
+          const coords = DATASET.map((d, idx) => ({
+            x: xScale(idx),
+            y: yScale(d[seriesKey]),
+            value: d[seriesKey],
+            index: idx
+          }));
+
+          // Trazado de línea
+          const linePathD = coords
+            .map((pt, i) => `${i === 0 ? "M" : "L"} ${pt.x.toFixed(1)} ${pt.y.toFixed(1)}`)
+            .join(" ");
+
+          // Trazado de área degradada
+          const baselineY = (margin.top + plotHeight).toFixed(1);
+          const areaPathD = `${linePathD} L ${coords[coords.length - 1].x.toFixed(1)} ${baselineY} L ${coords[0].x.toFixed(1)} ${baselineY} Z`;
+
+          const areaEl = createSvgElement("path", {
+            d: areaPathD,
+            fill: `url(#${meta.gradientId})`,
+            class: "series-area"
+          });
+          seriesGroup.appendChild(areaEl);
+
+          const pathEl = createSvgElement("path", {
+            d: linePathD,
+            stroke: meta.color,
+            class: "series-line",
+            "data-series-path": seriesKey
+          });
+          seriesGroup.appendChild(pathEl);
+
+          // Animación suave de trazado únicamente en la carga inicial
+          if (!state.hasAnimatedIntro && isVisible) {
+            requestAnimationFrame(() => {
+              try {
+                const totalLen = pathEl.getTotalLength();
+                pathEl.style.strokeDasharray = `${totalLen}`;
+                pathEl.style.strokeDashoffset = `${totalLen}`;
+                pathEl.getBoundingClientRect();
+                pathEl.style.transition = "stroke-dashoffset 880ms cubic-bezier(0.22, 1, 0.36, 1)";
+                pathEl.style.strokeDashoffset = "0";
+              } catch (err) {
+                // Respaldo seguro si getTotalLength no está disponible
+              }
+            });
+          }
+
+          // Marcadores circulares y etiquetas numéricas
+          coords.forEach((pt) => {
+            const isActive = state.activeIndex === pt.index && isVisible;
+
+            const halo = createSvgElement("circle", {
+              cx: pt.x.toFixed(1),
+              cy: pt.y.toFixed(1),
+              r: isActive ? "13" : "9",
+              fill: meta.color,
+              class: isActive ? "point-halo active" : "point-halo"
+            });
+            seriesGroup.appendChild(halo);
+
+            const dot = createSvgElement("circle", {
+              cx: pt.x.toFixed(1),
+              cy: pt.y.toFixed(1),
+              r: isActive ? "6.8" : "5",
+              fill: meta.color,
+              class: "point-dot"
+            });
+            seriesGroup.appendChild(dot);
+
+            if (state.showPermanentLabels && isVisible) {
+              const labelY = Math.max(margin.top + 12, pt.y - 11);
+              const valLabel = createSvgElement("text", {
+                x: pt.x.toFixed(1),
+                y: labelY.toFixed(1),
+                fill: meta.color,
+                class: "data-value-label"
+              });
+              valLabel.textContent = formatInt(pt.value);
+              seriesGroup.appendChild(valLabel);
+            }
+          });
+
+          svg.appendChild(seriesGroup);
+        });
+
+        state.hasAnimatedIntro = true;
+
+        // 6. Zonas invisibles de interacción por columna para respuesta inmediata al cursor/toque
+        const colStep = plotWidth / DATASET.length;
+        DATASET.forEach((d, idx) => {
+          const centerX = xScale(idx);
+          const hitX = idx === 0 ? margin.left : centerX - colStep / 2;
+          const hitW =
+            idx === 0 || idx === DATASET.length - 1
+              ? colStep / 2 + (isMobile ? 16 : 32)
+              : colStep;
+
+          const hitRect = createSvgElement("rect", {
+            x: Math.max(0, hitX).toFixed(1),
+            y: margin.top,
+            width: Math.max(20, hitW).toFixed(1),
+            height: plotHeight,
+            fill: "transparent",
+            style: "cursor: crosshair;"
+          });
+
+          hitRect.addEventListener("mouseenter", () => setActivePoint(idx, centerX));
+          hitRect.addEventListener("click", () => setActivePoint(idx, centerX));
+          svg.appendChild(hitRect);
+        });
+
+        // Restaurar posición de guía y tooltip si había un punto activo tras redimensionar
+        if (state.activeIndex !== null) {
+          const activeX = xScale(state.activeIndex);
+          updateHoverVisuals(state.activeIndex, activeX);
+        }
+      }
+
+      /* ========================================================================
+         6. ANIMACIÓN SUAVE DE REESCALADO DEL EJE Y
+         ======================================================================== */
+      function animateYScaleTo(newTarget) {
+        state.targetYMax = newTarget;
+        const startYMax = state.currentYMax;
+        if (Math.abs(newTarget - startYMax) < 0.5) {
+          state.currentYMax = newTarget;
+          renderChart();
+          return;
+        }
+
+        if (state.animFrameId) {
+          cancelAnimationFrame(state.animFrameId);
+        }
+
+        const duration = 380;
+        const startTime = performance.now();
+
+        function step(now) {
+          const elapsed = now - startTime;
+          const t = Math.min(1, elapsed / duration);
+          // Ease-out cúbico
+          const eased = 1 - Math.pow(1 - t, 3);
+          state.currentYMax = startYMax + (newTarget - startYMax) * eased;
+          renderChart();
+
+          if (t < 1) {
+            state.animFrameId = requestAnimationFrame(step);
+          } else {
+            state.currentYMax = newTarget;
+            state.animFrameId = null;
+            renderChart();
+          }
+        }
+
+        state.animFrameId = requestAnimationFrame(step);
+      }
+
+      /* ========================================================================
+         7. INTERACCIÓN TOOLTIP Y LÍNEA GUÍA VERTICAL
+         ======================================================================== */
+      function setActivePoint(index, xCoord) {
+        if (state.activeIndex !== index) {
+          state.activeIndex = index;
+          renderChart();
+        }
+        updateHoverVisuals(index, xCoord);
+      }
+
+      function clearActivePoint() {
+        state.activeIndex = null;
+        tooltipEl.classList.remove("visible");
+        const guide = document.getElementById("svg-hover-guide");
+        if (guide) guide.classList.remove("visible");
+        renderChart();
+      }
+
+      function updateHoverVisuals(index, xCoord) {
+        const item = DATASET[index];
+        if (!item) return;
+
+        // Actualizar línea guía vertical
+        const guide = document.getElementById("svg-hover-guide");
+        if (guide) {
+          guide.setAttribute("x1", xCoord.toFixed(1));
+          guide.setAttribute("x2", xCoord.toFixed(1));
+          guide.classList.add("visible");
+        }
+
+        // Construir contenido del tooltip
+        const tagHtml = item.note ? `<span class="tooltip-tag">${item.note}</span>` : "";
+        const yoyTText =
+          item.yoyTrasplantes !== null
+            ? `<span class="yoy-positive">${formatPercent(item.yoyTrasplantes)}</span> respecto a ${DATASET[index - 1].year}`
+            : "Año inicial de la serie";
+
+        const yoyDText =
+          item.yoyDonantes !== null
+            ? `<span class="yoy-positive">${formatPercent(item.yoyDonantes)}</span> respecto a ${DATASET[index - 1].year}`
+            : "Año inicial de la serie";
+
+        tooltipEl.innerHTML = `
+          <div class="tooltip-header">
+            <span class="tooltip-year">Año ${item.year}</span>
+            ${tagHtml}
+          </div>
+
+          <div class="tooltip-row ${state.visibleSeries.trasplantes ? "" : "dimmed"}">
+            <div class="tooltip-row-top">
+              <span class="tooltip-series-name">
+                <span class="tooltip-dot" style="background:${SERIES_META.trasplantes.color}"></span>
+                Total Trasplantes
+              </span>
+              <span class="tooltip-value">${formatInt(item.trasplantes)}</span>
+            </div>
+            <div class="tooltip-yoy">${yoyTText}</div>
+          </div>
+
+          <div class="tooltip-row ${state.visibleSeries.donantes ? "" : "dimmed"}">
+            <div class="tooltip-row-top">
+              <span class="tooltip-series-name">
+                <span class="tooltip-dot" style="background:${SERIES_META.donantes.color}"></span>
+                Donantes Efectivos
+              </span>
+              <span class="tooltip-value">${formatInt(item.donantes)}</span>
+            </div>
+            <div class="tooltip-yoy">${yoyDText}</div>
+          </div>
+
+          <div class="tooltip-divider"></div>
+
+          <div class="tooltip-metric">
+            <span>Tasa trasplantes / donante:</span>
+            <strong>${formatRatio(item.ratio)}</strong>
+          </div>
+        `;
+
+        tooltipEl.classList.add("visible");
+
+        // Posicionamiento inteligente para evitar desbordes laterales o verticales
+        const stageRect = chartStage.getBoundingClientRect();
+        const tipRect = tooltipEl.getBoundingClientRect();
+        const pad = 12;
+
+        let left = xCoord + 16;
+        if (left + tipRect.width > stageRect.width - pad) {
+          left = xCoord - tipRect.width - 16;
+        }
+        if (left < pad) {
+          left = Math.max(pad, (stageRect.width - tipRect.width) / 2);
+        }
+
+        const top = Math.max(pad, Math.min(26, stageRect.height - tipRect.height - pad));
+        tooltipEl.style.transform = `translate3d(${Math.round(left)}px, ${Math.round(top)}px, 0)`;
+      }
+
+      // Soporte táctil continuo (deslizar el dedo por los años en móviles)
+      function handleTouchInspect(e) {
+        if (!e.touches || e.touches.length === 0) return;
+        const touch = e.touches[0];
+        const rect = chartStage.getBoundingClientRect();
+        const relX = touch.clientX - rect.left;
+        const { isMobile, margin, plotWidth } = getLayoutMetrics();
+        const padX = isMobile ? 16 : 32;
+        const usableW = Math.max(40, plotWidth - padX * 2);
+        const startX = margin.left + padX;
+
+        const ratio = Math.max(0, Math.min(1, (relX - startX) / usableW));
+        const nearestIdx = Math.round(ratio * (DATASET.length - 1));
+        const exactX = startX + (nearestIdx / (DATASET.length - 1)) * usableW;
+        setActivePoint(nearestIdx, exactX);
+      }
+
+      chartStage.addEventListener("touchstart", handleTouchInspect, { passive: true });
+      chartStage.addEventListener("touchmove", handleTouchInspect, { passive: true });
+      chartStage.addEventListener("mouseleave", clearActivePoint);
+
+      // Navegación por teclado accesible
+      chartStage.addEventListener("keydown", (e) => {
+        if (e.key === "ArrowRight" || e.key === "ArrowLeft") {
+          e.preventDefault();
+          const dir = e.key === "ArrowRight" ? 1 : -1;
+          const nextIdx =
+            state.activeIndex === null
+              ? 0
+              : (state.activeIndex + dir + DATASET.length) % DATASET.length;
+          const { isMobile, margin, plotWidth } = getLayoutMetrics();
+          const padX = isMobile ? 16 : 32;
+          const usableW = Math.max(40, plotWidth - padX * 2);
+          const exactX = margin.left + padX + (nextIdx / (DATASET.length - 1)) * usableW;
+          setActivePoint(nextIdx, exactX);
+        } else if (e.key === "Escape") {
+          clearActivePoint();
+        }
+      });
+
+      /* ========================================================================
+         8. LEYENDA INTERACTIVA, ETIQUETAS Y PESTAÑAS
+         ======================================================================== */
+      legendButtons.forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const seriesKey = btn.getAttribute("data-series");
+          const currentlyActive = state.visibleSeries[seriesKey];
+          const otherKey = seriesKey === "trasplantes" ? "donantes" : "trasplantes";
+
+          // Evitar desactivar ambas series simultáneamente
+          if (currentlyActive && !state.visibleSeries[otherKey]) {
+            showToast("Debe permanecer al menos una serie visible en el gráfico.");
+            return;
+          }
+
+          state.visibleSeries[seriesKey] = !currentlyActive;
+          btn.setAttribute("aria-pressed", String(state.visibleSeries[seriesKey]));
+
+          const nextYMax = computeTargetYMax();
+          animateYScaleTo(nextYMax);
+        });
+      });
+
+      toggleLabelsInput.addEventListener("change", (e) => {
+        state.showPermanentLabels = e.target.checked;
+        renderChart();
+      });
+
+      // Cambio entre vista Gráfico y vista Tabla de datos
+      function switchTab(mode) {
+        const isChart = mode === "chart";
+        tabChart.setAttribute("aria-selected", String(isChart));
+        tabTable.setAttribute("aria-selected", String(!isChart));
+
+        panelChart.style.display = isChart ? "block" : "none";
+        panelTable.classList.toggle("active", !isChart);
+        labelsToggleWrapper.style.visibility = isChart ? "visible" : "hidden";
+
+        if (isChart) {
+          renderChart();
+        } else {
+          clearActivePoint();
+        }
+      }
+
+      tabChart.addEventListener("click", () => switchTab("chart"));
+      tabTable.addEventListener("click", () => switchTab("table"));
+
+      /* ========================================================================
+         9. POBLADO DE LA TABLA DE DATOS Y COPIADO AL PORTAPAPELES
+         ======================================================================== */
+      function populateDataTable() {
+        tableBody.innerHTML = DATASET.map((d) => {
+          const yearLabel = d.note ? `${d.year} <small style="font-weight:500;color:#64748b">(${d.note})</small>` : d.year;
+          return `
+            <tr>
+              <td>${yearLabel}</td>
+              <td>${formatInt(d.donantes)}</td>
+              <td class="${d.yoyDonantes !== null ? "yoy-positive" : ""}">${formatPercent(d.yoyDonantes)}</td>
+              <td>${formatInt(d.trasplantes)}</td>
+              <td class="${d.yoyTrasplantes !== null ? "yoy-positive" : ""}">${formatPercent(d.yoyTrasplantes)}</td>
+              <td>${formatRatio(d.ratio)}</td>
+            </tr>
+          `;
+        }).join("");
+
+        const first = DATASET[0];
+        const last = DATASET[DATASET.length - 1];
+        const accDonantes = ((last.donantes - first.donantes) / first.donantes) * 100;
+        const accTrasplantes = ((last.trasplantes - first.trasplantes) / first.trasplantes) * 100;
+        const totalDonantes = DATASET.reduce((s, r) => s + r.donantes, 0);
+        const totalTrasplantes = DATASET.reduce((s, r) => s + r.trasplantes, 0);
+        const avgRatio = totalTrasplantes / totalDonantes;
+
+        tableFoot.innerHTML = `
+          <tr>
+            <td>Variación acumulada (2022–2026)</td>
+            <td>+${formatInt(last.donantes - first.donantes)}</td>
+            <td class="yoy-positive">${formatPercent(accDonantes)}</td>
+            <td>+${formatInt(last.trasplantes - first.trasplantes)}</td>
+            <td class="yoy-positive">${formatPercent(accTrasplantes)}</td>
+            <td>Prom: ${formatRatio(avgRatio)}</td>
+          </tr>
+        `;
+      }
+
+      copyTableBtn.addEventListener("click", () => {
+        const header = "Año\tDonantes Efectivos\tVar. Donantes\tTotal Trasplantes\tVar. Trasplantes\tTasa Trasplantes/Donante";
+        const rows = DATASET.map((d) =>
+          [
+            d.year,
+            d.donantes,
+            formatPercent(d.yoyDonantes),
+            d.trasplantes,
+            formatPercent(d.yoyTrasplantes),
+            formatRatio(d.ratio)
+          ].join("\t")
+        );
+        const textToCopy = [header, ...rows].join("\n");
+
+        const tempTextarea = document.createElement("textarea");
+        tempTextarea.value = textToCopy;
+        tempTextarea.style.position = "fixed";
+        tempTextarea.style.opacity = "0";
+        document.body.appendChild(tempTextarea);
+        tempTextarea.select();
+
+        try {
+          document.execCommand("copy");
+          showToast("Datos copiados al portapapeles en formato tabular.");
+        } catch (err) {
+          showToast("No se pudieron copiar los datos.");
+        } finally {
+          document.body.removeChild(tempTextarea);
+        }
+      });
+
+      /* ========================================================================
+         10. INICIALIZACIÓN Y OBSERVADOR DE REDIMENSIONAMIENTO
+         ======================================================================== */
+      populateDataTable();
+      state.currentYMax = computeTargetYMax();
+      state.targetYMax = state.currentYMax;
+      renderChart();
+
+      if (typeof ResizeObserver !== "undefined") {
+        const ro = new ResizeObserver(() => {
+          if (panelChart.style.display !== "none") {
+            renderChart();
+          }
+        });
+        ro.observe(chartStage);
+      } else {
+        window.addEventListener("resize", renderChart);
+      }
+    })();
+  </script>
+</body>
+</html>
